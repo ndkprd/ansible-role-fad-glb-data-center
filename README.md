@@ -15,8 +15,8 @@ ansible-galaxy install ndkprd.fortiadc-glb-data-center
 ### Hosts Example
 
 ```
-fad1.ndkprd.com fad_apitoken=mysupersecrettoken
-fad2.ndkprd.com fad_apitoken=mysupersecrettoken
+fad1.ndkprd.com fad_apitoken=my-supersecret-token
+fad2.ndkprd.com fad_apitoken=my-supersecret-token
 ```
 
 ### Vars Example
