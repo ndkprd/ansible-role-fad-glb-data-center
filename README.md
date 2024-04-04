@@ -2,7 +2,7 @@
 
 ## Description
 
-Ansible role to create/update Fortinet's FortiADC GLB Data Host using REST API.
+Ansible role to create/update Fortinet's FortiADC GLB Data Center entries using REST API.
 
 ## Usage
 
