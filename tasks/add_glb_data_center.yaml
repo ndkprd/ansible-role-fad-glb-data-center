@@ -29,8 +29,8 @@
 
 - name: Compare the current existing state with our desired state ({{ data_center.name }}).
   ansible.builtin.set_fact:
-    idempotent_check_1: "{{ data_center.name }} == {{ fad_glb_dc_existing_data.json.payload.mkey }}"
-    idempotent_check_2: "{{ data_center.location }} == {{ fad_glb_dc_existing_data.json.payload.location }}"
+    idempotent_check_1: "{{ data_center.name }} == {{ fad_glb_dc_existing_data.json.payload.mkey }} | bool"
+    idempotent_check_2: "{{ data_center.location }} == {{ fad_glb_dc_existing_data.json.payload.location }} | bool"
   tags:
     - idempotent_check
 
