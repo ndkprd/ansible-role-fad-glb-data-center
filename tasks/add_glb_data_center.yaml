@@ -27,13 +27,6 @@
   tags:
     - debug
 
-- name: Compare the current existing state with our desired state ({{ data_center.name }}).
-  ansible.builtin.set_fact:
-    idempotent_check_1: {{ data_center.name }} == {{ fad_glb_dc_existing_data.json.payload.mkey }} | bool
-    idempotent_check_2: {{ data_center.location }} == {{ fad_glb_dc_existing_data.json.payload.location }} | bool
-  tags:
-    - idempotent_check
-
 - name: Debug out the value of idempotent_check.
   ansible.builtin.debug:
     msg: |
@@ -86,7 +79,9 @@
       when: "fad_glb_dc_post_result.json == -15"
       failed_when: "fad_glb_dc_put_result.json.payload != -15 and fad_glb_dc_put_result.json.payload != 0"
 
-  when: "idempotent_check_1 == true and idempotent_check_2 == true"
+  when:
+    - "{{ data_center.name }} == {{ fad_glb_dc_existing_data.json.payload.mkey }}"
+    - "{{ data_center.location }} == {{ fad_glb_dc_existing_data.json.payload.location }} | bool"
 
 - name: Check if the data center value has changed ({{ data_center.name }}).
   ansible.builtin.uri:
