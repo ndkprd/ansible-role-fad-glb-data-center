@@ -50,9 +50,15 @@ fad_glb_data_centers:
 
 ```
 
+### About Tags
+
+I added quiet lots of debug task, mainly to check if the variable I set is correct. These tags basically just print out the var that the previous task set/register. You can skip them altogether by skipping tasks with "debug" tags.
+
+From command line, you can just go `ansible-playbook playbook.yaml --skip-tags debug`.
+
 ## Limitation
 
-Developed and tested against FortiADC 7.0.
+Only developed and tested against FortiADC 7.0.
 
 ## License
 
