@@ -1,5 +1,0 @@
-warn_list:
-  - 'yaml'
-  - 'no-handler'
-  - 'role-name'
-  - 'name'
