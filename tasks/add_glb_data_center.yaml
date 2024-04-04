@@ -74,8 +74,8 @@
       failed_when: "fad_glb_dc_put_result.json.payload != -15 and fad_glb_dc_put_result.json.payload != 0"
 
   when: >
-    "data_center.name == fad_glb_dc_existing_data.json.payload.mkey and 
-    data_center.location == fad_glb_dc_existing_data.json.payload.location"
+    "data_center.name != fad_glb_dc_existing_data.json.payload.mkey and 
+    data_center.location != fad_glb_dc_existing_data.json.payload.location"
 
 - name: Check if the data center value has changed ({{ data_center.name }}).
   ansible.builtin.uri:
