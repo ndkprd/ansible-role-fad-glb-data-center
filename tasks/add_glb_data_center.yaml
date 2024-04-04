@@ -34,6 +34,9 @@
     - debug
 
 - name: Create/update entry if idempotent check failed {{ data_center.name }}.
+  when: "data_center.name != fad_glb_dc_existing_data.json.payload.mkey or data_center.location != fad_glb_dc_existing_data.json.payload.location"
+  tags:
+    - fad_glb_dc
   block:
 
     - name: Write request body json tmp file ({{ data_center.name }} - {{ idempotent_check.fail_suffix }}).
@@ -98,7 +101,3 @@
       delegate_to: localhost
       tags:
         - debug
-
-  when: "data_center.name != fad_glb_dc_existing_data.json.payload.mkey or data_center.location != fad_glb_dc_existing_data.json.payload.location"
-  tags:
-    - fad_glb_dc
