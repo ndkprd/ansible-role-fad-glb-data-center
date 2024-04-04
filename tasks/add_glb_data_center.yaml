@@ -27,12 +27,6 @@
   tags:
     - debug
 
-- name: Debug out the value of idempotent_check.
-  ansible.builtin.debug:
-    msg: |
-      Idempotent Check #1: {{ idempotent_check_1}}
-      Idempotent Check #2: {{ idempotent_check_2}}
-
 - name: Create/update entry if idempotent check failed {{ data_center.name }}.
   block:
 
@@ -81,7 +75,7 @@
 
   when:
     - "{{ data_center.name }} == {{ fad_glb_dc_existing_data.json.payload.mkey }}"
-    - "{{ data_center.location }} == {{ fad_glb_dc_existing_data.json.payload.location }} | bool"
+    - "{{ data_center.location }} == {{ fad_glb_dc_existing_data.json.payload.location }}"
 
 - name: Check if the data center value has changed ({{ data_center.name }}).
   ansible.builtin.uri:
