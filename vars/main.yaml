@@ -11,5 +11,5 @@ fad_api_header:
   'APITOKEN': '{{ fad_apitoken }}'
 
 idempotent_check:
-  fail_suffix: "only run when idempotent check fails."
-  success_suffix: "will be skipped if idempotent check succeed."
+  fail_suffix: "only run when idempotent check fails"
+  success_suffix: "will be skipped if idempotent check succeed"
