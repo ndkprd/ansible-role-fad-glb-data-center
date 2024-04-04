@@ -34,7 +34,11 @@
     - debug
 
 - name: Create/update entry if idempotent check failed {{ data_center.name }}.
-  when: "data_center.name != fad_glb_dc_existing_data.json.payload.mkey or data_center.location != fad_glb_dc_existing_data.json.payload.location"
+  when: >
+    (
+      data_center.name != fad_glb_dc_existing_data.json.payload.mkey or
+      data_center.location != fad_glb_dc_existing_data.json.payload.location
+    )
   tags:
     - fad_glb_dc
   block:
