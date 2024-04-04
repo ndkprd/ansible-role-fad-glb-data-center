@@ -84,22 +84,22 @@
       when: "fad_glb_dc_post_result.json.payload == -15"
       failed_when: "fad_glb_dc_put_result.json.payload != -15 and fad_glb_dc_put_result.json.payload != 0"
 
-    - name: Check if the data center value has changed ({{ data_center.name }} - {{ idempotent_check.fail_suffix }}).
-      ansible.builtin.uri:
-        method: GET
-        url: "{{ fad_api_endpoint_glb_dc }}"
-        body_format: "{{ fad_api_uri_params.body_format }}"
-        validate_certs: "{{ fad_api_uri_params.validate_certs }}"
-        return_content: "{{ fad_api_uri_params.return_content }}"
-        status_code: "{{ fad_api_uri_params.status_code }}"
-        headers: "{{ fad_api_header }}"
-      register: fad_glb_dc_new_data
-      changed_when: "fad_glb_dc_new_data.json.payload != fad_glb_dc_existing_data.json.payload"
-      delegate_to: localhost
+- name: Check if the data center value has changed ({{ data_center.name }} - {{ idempotent_check.fail_suffix }}).
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ fad_api_endpoint_glb_dc }}"
+    body_format: "{{ fad_api_uri_params.body_format }}"
+    validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+    return_content: "{{ fad_api_uri_params.return_content }}"
+    status_code: "{{ fad_api_uri_params.status_code }}"
+    headers: "{{ fad_api_header }}"
+  register: fad_glb_dc_new_data
+  changed_when: "fad_glb_dc_new_data.json.payload != fad_glb_dc_existing_data.json.payload"
+  delegate_to: localhost
 
-    - name: Print the existing value of data center entry ({{ data_center.name }} - {{ idempotent_check.fail_suffix }}).
-      ansible.builtin.debug:
-        var: fad_glb_dc_new_data.json
-      delegate_to: localhost
-      tags:
-        - debug
+- name: Print the existing value of data center entry ({{ data_center.name }} - {{ idempotent_check.fail_suffix }}).
+  ansible.builtin.debug:
+      var: fad_glb_dc_new_data.json
+  delegate_to: localhost
+  tags:
+    - debug
