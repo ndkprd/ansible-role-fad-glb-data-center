@@ -52,7 +52,7 @@ fad_glb_data_centers:
 
 ### About Tags
 
-I added quiet lots of debug task, mainly to check if the variable I set is correct. These tags basically just print out the var that the previous task set/register. You can skip them altogether by skipping tasks with "debug" tags.
+I added quiet lots of debug task, mainly to check if the variable I set is correct. These tags basically just print out the var that the previous task set/register. You can skip them altogether by skipping tasks with `debug` tags.
 
 For example, if you're using CLI, you can just go `ansible-playbook playbook.yaml --skip-tags debug`.
 
