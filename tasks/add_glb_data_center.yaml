@@ -96,10 +96,13 @@
   register: fad_glb_dc_new_data
   changed_when: "fad_glb_dc_new_data.json.payload != fad_glb_dc_existing_data.json.payload"
   delegate_to: localhost
+  tags:
+    - fad_glb_dc
 
 - name: Print the existing value of data center entry ({{ data_center.name }} - {{ idempotent_check.fail_suffix }}).
   ansible.builtin.debug:
       var: fad_glb_dc_new_data.json
   delegate_to: localhost
   tags:
+    - fad_glb_dc
     - debug
