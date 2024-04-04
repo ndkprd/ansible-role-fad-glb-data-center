@@ -6,7 +6,6 @@ galaxy_info:
   role_name: fortiadc-glb-data-center
   namespace: ndkprd
   description: An Ansible role to create/update Fortinet's FortiADC Global Load Balance Data Center configuration.
-  standalone: true
   license: MIT
   min_ansible_version: '2.12'
   platforms:
