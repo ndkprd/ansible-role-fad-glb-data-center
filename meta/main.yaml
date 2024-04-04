@@ -12,9 +12,7 @@ galaxy_info:
   platforms:
     - name: "RHEL/CentOS"
       versions:
-        - '7'
-        - '8'
-        - '9'
+        - 'all'
 
   galaxy_tags:
     - fortiadc
