@@ -71,7 +71,7 @@
         body: "{{ lookup('ansible.builtin.file', request_body.dest) }}"
       register: fad_glb_dc_put_result
       delegate_to: localhost
-      when: "fad_glb_dc_post_result.json == -15"
+      when: "fad_glb_dc_post_result.json.payload == -15"
       failed_when: "fad_glb_dc_put_result.json.payload != -15 and fad_glb_dc_put_result.json.payload != 0"
 
     - name: Check if the data center value has changed ({{ data_center.name }} - {{ idempotent_check.fail_suffix }}).
