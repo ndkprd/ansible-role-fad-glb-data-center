@@ -1,0 +1,20 @@
+---
+# ./.github/workflows/ci.yaml
+
+name: Build
+# basically just doing ansible-lint, though
+
+on:
+  pull_request:
+    branches:
+      - main
+
+job:
+  build:
+    name: Ansible Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo.
+        uses: actions/checkout@v4
+      - name: Run ansible-lint.
+        uses: ansible/ansible-lint@main

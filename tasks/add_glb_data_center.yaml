@@ -1,12 +1,14 @@
 - name: Set GLB DC REST API endpoint ({{ data_center.name }}).
   ansible.builtin.set_fact:
     fad_api_endpoint_glb_dc: https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}
-    idempotent_check_fail_prefix:
+  tags:
+    - fad_glb_dc
 
 - name: Print out the GLB DC REST API endpoint ({{ data_center.name }}).
   ansible.builtin.debug:
     msg: "This FAD GLB DC REST API endpoint: {{ fad_api_endpoint_glb_dc }}"
   tags:
+    - fad_glb_dc
     - debug
 
 - name: Get the existing value of data center entry ({{ data_center.name }}).
@@ -20,12 +22,15 @@
     headers: "{{ fad_api_header }}"
   register: fad_glb_dc_existing_data
   delegate_to: localhost
+  tags:
+    - fad_glb_dc
 
 - name: Print the existing value of data center entry ({{ data_center.name }}).
   ansible.builtin.debug:
     var: fad_glb_dc_existing_data.json.payload
   delegate_to: localhost
   tags:
+    - fad_glb_dc
     - debug
 
 - name: Create/update entry if idempotent check failed {{ data_center.name }}.
@@ -94,4 +99,9 @@
       tags:
         - debug
 
-  when: "data_center.name != fad_glb_dc_existing_data.json.payload.mkey or data_center.location != fad_glb_dc_existing_data.json.payload.location"
+  when: >-
+    "data_center.name != fad_glb_dc_existing_data.json.payload.mkey
+    or data_center.location != fad_glb_dc_existing_data.json.payload.location"
+  tags:
+    -   tags:
+    - fad_glb_dc
