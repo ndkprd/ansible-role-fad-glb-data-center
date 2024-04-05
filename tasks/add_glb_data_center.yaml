@@ -11,7 +11,7 @@
     - fad_glb_dc
     - debug
 
-- name: Get the existing value of data center entry ({{ data_center.name }}).
+- name: Get the existing value ofnano data center entry ({{ data_center.name }}).
   ansible.builtin.uri:
     method: GET
     url: "{{ fad_api_endpoint_glb_dc }}"
