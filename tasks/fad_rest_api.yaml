@@ -1,4 +1,4 @@
-- name: Get the existing value ofnano data center entry for {{ data_center.name }}
+- name: Get the existing value of the data center entry for {{ data_center.name }}
   ansible.builtin.uri:
     method: "{{ http_method }}"
     url: "{{ fad_api_endpoint_glb_dc }}"
@@ -7,13 +7,12 @@
     return_content: "{{ fad_api_uri_params.return_content }}"
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
-  register: fad_glb_dc_existing_data
   delegate_to: localhost
   when: http_method == 'GET'
   tags:
     - fad_glb_dc
 
-- name: Get the existing value ofnano data center entry for {{ data_center.name }}
+- name: Create/update the data center entry for {{ data_center.name }} according to the idempotent check for {{ data_center.name }}
   ansible.builtin.uri:
     method: "{{ http_method }}"
     url: "{{ fad_api_endpoint_glb_dc }}"

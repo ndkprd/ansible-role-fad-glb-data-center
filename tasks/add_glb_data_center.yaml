@@ -29,6 +29,7 @@
   ansible.builtin.include_tasks: fad_rest_api.yaml
   vars:
     http_method: 'GET'
+  register: fad_glb_dc_existing_data
   tags:
     - fad_glb_dc
   
