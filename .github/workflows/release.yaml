@@ -23,9 +23,11 @@ jobs:
         run: echo "::set-output name=version::$(cat VERSION)"
       - name: Increment patch version.
         run: |
-          bumpversion patch VERSION
+          bumpversion --new-version ${NEW_VERSION} VERSION
           new_version=$(cat VERSION)
           echo "::set-output name=new_version:$new_version"
+      - name: Set new version.
+        run: echo "NEW_VERSION=$(cat VERSION)" >> $GITHUB_ENV
 
   github-release:
     runs-on: ubuntu-latest
@@ -37,9 +39,9 @@ jobs:
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "v${{ needs.nump-version.outputs.new_version }}"
+          automatic_release_tag: "v${{ env.NEW_VERSION }}"
           prerelease: false
-          title: "v${{ needs.bump-version.outputs.new_version }}"
+          title: "v${{ env.NEW_VERSION }}"
 
   push-to-galaxy:
     runs-on: ubuntu-latest
