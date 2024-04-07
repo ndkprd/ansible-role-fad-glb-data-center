@@ -84,7 +84,7 @@
   tags:
     - fad_glb_dc
 
-- name: Update the data center entry if entry exist ({{ data_center.name }}.
+- name: Update the data center entry if entry exist for {{ data_center.name }}
   ansible.builtin.uri:
     method: PUT
     url: "{{ fad_api_endpoint_glb_dc }}"
@@ -104,7 +104,7 @@
   tags:
     - fad_glb_dc
 
-- name: Check if the data center value has changed ({{ data_center.name }} - {{ idempotent_check.fail_suffix }}).
+- name: Check if the data center value has changed for {{ data_center.name }}
   ansible.builtin.uri:
     method: GET
     url: "{{ fad_api_endpoint_glb_dc }}"
@@ -119,8 +119,7 @@
   tags:
     - fad_glb_dc
 
-- name: Print the existing value of data center entry ({{ data_center.name }} - {{ idempotent_check.fail_suffix }}).
-  ansible.builtin.debug:
+- name: Print the existing value of data center entry for {{ data_center.name }}
       var: fad_glb_dc_new_data.json
   delegate_to: localhost
   tags:

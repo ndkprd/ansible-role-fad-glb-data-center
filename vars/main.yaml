@@ -9,7 +9,3 @@ fad_api_uri_params:
 fad_api_header:
   'Content-Type': 'application/json'
   'APITOKEN': '{{ fad_apitoken }}'
-
-idempotent_check:
-  fail_suffix: "only run when idempotent check fails"
-  success_suffix: "will be skipped if idempotent check succeed"
