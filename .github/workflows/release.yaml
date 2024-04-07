@@ -18,9 +18,9 @@ jobs:
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
+          automatic_release_tag: "v1.1.5"
           prerelease: false
-          title: v1.1.4
+          title: "v1.1.5"
   push-to-galaxy:
     runs-on: ubuntu-latest
     needs: github-release
