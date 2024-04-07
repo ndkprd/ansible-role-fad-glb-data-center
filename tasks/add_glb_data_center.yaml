@@ -11,31 +11,20 @@
     - fad_glb_dc
     - debug
 
-# - name: Get the existing value of the data center entry for {{ data_center.name }}
-#   ansible.builtin.uri:
-#     method: GET
-#     url: "{{ fad_api_endpoint_glb_dc }}"
-#     body_format: "{{ fad_api_uri_params.body_format }}"
-#     validate_certs: "{{ fad_api_uri_params.validate_certs }}"
-#     return_content: "{{ fad_api_uri_params.return_content }}"
-#     status_code: "{{ fad_api_uri_params.status_code }}"
-#     headers: "{{ fad_api_header }}"
-#   register: fad_glb_dc_existing_data
-#   delegate_to: localhost
-#   tags:
-#     - fad_glb_dc
-
 - name: Get the existing value of the data center entry for {{ data_center.name }}
-  ansible.builtin.include_tasks: fad_rest_api.yaml
-  vars:
-    http_method: 'GET'
+  ansible.builtin.uri:
+    method: GET
+    url: "{{ fad_api_endpoint_glb_dc }}"
+    body_format: "{{ fad_api_uri_params.body_format }}"
+    validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+    return_content: "{{ fad_api_uri_params.return_content }}"
+    status_code: "{{ fad_api_uri_params.status_code }}"
+    headers: "{{ fad_api_header }}"
   register: fad_glb_dc_existing_data
+  delegate_to: localhost
   tags:
     - fad_glb_dc
 
-- debug:
-    var: fad_glb_dc_existing_data
-  
 - name: Print the existing value of data center entry for {{ data_center.name }}
   ansible.builtin.debug:
     var: fad_glb_dc_existing_data.json.payload
