@@ -9,7 +9,16 @@ on:
       - main
 
 jobs:
-  release:
+  Set Up Release on Github:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo.
+        uses: actions/checkout@v4
+      - name: Release with release-please
+        uses: google-github-actions/release-please-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+  Push to Ansible Galaxy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo.
