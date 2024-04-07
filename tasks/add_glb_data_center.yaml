@@ -120,6 +120,7 @@
     - fad_glb_dc
 
 - name: Print the new value of data center entry for {{ data_center.name }}
+  ansible.builtin.debug:
     var: fad_glb_dc_new_data.json.payload
   delegate_to: localhost
   tags:
