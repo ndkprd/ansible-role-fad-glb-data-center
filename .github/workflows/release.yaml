@@ -11,6 +11,8 @@ on:
 jobs:
   bump-version:
     runs-on: ubuntu-latest
+    outputs:
+      NEW_VERSION: ${{ steps.set_var.outputs.NEW_VERSION }}
     steps:
       - name: Checkout repo.
         uses: actions/checkout@v2
@@ -20,9 +22,10 @@ jobs:
           version=$(cat VERSION)
           major_minor="${version%.*}"
           patch_number="${version##*.}"
-          new_patch_number=$((last_number + 1))
+          new_patch_number=$((patch_number + 1))
           new_version="${major_minor}.${new_patch_number}"
           echo "$new_version" > VERSION
+          echo "Updated from $version to $new_version"
           git config --global user.email "andikapradp@gmail.com"
           git config --global user.name "ndkprd"
           git add VERSION
