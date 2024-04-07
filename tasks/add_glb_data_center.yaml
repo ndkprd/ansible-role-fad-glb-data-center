@@ -1,3 +1,5 @@
+---
+
 - name: Set GLB DC REST API endpoint for {{ data_center.name }}
   ansible.builtin.set_fact:
     fad_api_endpoint_glb_dc: https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}

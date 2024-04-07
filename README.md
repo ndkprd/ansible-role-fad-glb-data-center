@@ -15,21 +15,9 @@ ansible-galaxy install ndkprd.fortiadc-glb-data-center
 ### Hosts Example
 
 ```
+[fortiadc]
 fad1.ndkprd.com fad_apitoken=my-super-secrettoken
 fad2.ndkprd.com fad_apitoken=my-super-secrettoken
-```
-
-### Vars Example
-
-```
----
-fad_vdom: root
-
-fad_glb_data_centers:
-  - name: dc1.ndkprd.com # Data Center name
-    location: ID # 2 letters country ID
-  - name: dc2.ndkprd.com
-    location: ID
 ```
 
 ### Playbook Example
@@ -42,8 +30,13 @@ fad_glb_data_centers:
   hosts: fortiadc
   become: false
   gather_facts: no
-  vars_files:
-    - ./fad-glb-dc-vars.yaml
+  vars:
+    fad_vdom: root
+    fad_glb_data_centers:
+      - name: dc1.ndkprd.com # Data Center name
+        location: ID # 2 letters country ID
+      - name: dc2.ndkprd.com
+        location: ID
 
   roles:
     - ndkprd.fortiadc-glb-data-center
