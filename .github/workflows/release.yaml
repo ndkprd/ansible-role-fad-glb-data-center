@@ -14,16 +14,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install bumpversion
-        run: pip install bump2version
       - name: Read current version
-        id: read-version
-        run: echo "::set-output name=version::$(cat VERSION)"
-      - name: Increment patch version
         run: |
-          bumpversion patch VERSION
-          new_version=$(cat VERSION)
-          echo "::set-output name=new_version::$new_version"
+          version=$(cat VERSION)
+          major_minor="${version%.*}"
+          last_number="${version##*.}"
+          new_last_number=$((last_number + 1))
+          new_version="${major_minor}.${new_last_number}"
+          echo "$new_version" > VERSION
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add VERSION
+          git commit -m "Bump version to $new_version"
+          git push origin main
       - name: Set new version
         run: echo "NEW_VERSION=$(cat VERSION)" >> $GITHUB_ENV
 
