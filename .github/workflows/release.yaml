@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  Set Up Release on Github:
+  github-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo.
@@ -18,7 +18,7 @@ jobs:
         uses: google-github-actions/release-please-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-  Push to Ansible Galaxy:
+  push-to-galaxy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo.
