@@ -29,16 +29,11 @@ jobs:
           patch_number="${version##*.}"
           new_patch_number=$((patch_number + 1))
           new_version="${major_minor}.${new_patch_number}"
-          echo "$new_version" > VERSION
+          echo "$new_version" > NEW_VERSION
           echo "Updated from $version to $new_version"
-          git config --global user.email "andikapradp@gmail.com"
-          git config --global user.name "ndkprd"
-          git add VERSION
-          git commit -m "Bump version to $new_version"
-          git push origin main
       - name: Pass the current file into a var.
         id: set_var
-        run: echo "NEW_VERSION=$(cat VERSION)" >> $GITHUB_OUTPUT
+        run: echo "NEW_VERSION=$(cat NEW_VERSION)" >> $GITHUB_OUTPUT
 
   github-release:
     runs-on: ubuntu-latest
