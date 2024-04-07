@@ -9,6 +9,7 @@ on:
       - main
 
 jobs:
+  bump-version:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
