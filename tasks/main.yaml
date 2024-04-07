@@ -1,6 +1,6 @@
 ---
 
-- name: Create/update GLB Data Centers, Servers, and Servers Member.
+- name: Include task to create/update GLB Data Centers.
   ansible.builtin.include_tasks: add_glb_data_center.yaml
   loop: "{{ fad_glb_data_centers }}"
   loop_control:
