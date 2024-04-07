@@ -28,7 +28,7 @@
 - name: Get the existing value of the data center entry for {{ data_center.name }}
   ansible.builtin.include_tasks: fad_rest_api.yaml
   vars:
-    http_method: GET
+    http_method: 'GET'
   tags:
     - fad_glb_dc
   
