@@ -9,8 +9,23 @@ on:
       - main
 
 jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo.
+        uses: actions/checkout@v4
+      - name: Read current version.
+        id: read-version
+        run: echo "::set-output name=version::$(cat VERSION)"
+      - name: Increment patch version.
+        run: |
+          bumpversion patch VERSION
+          new_version=$(cat VERSION)
+          echo "::set-output name=new_version:$new_version"
+
   github-release:
     runs-on: ubuntu-latest
+    needs: bump-version
     steps:
       - name: Checkout repo.
         uses: actions/checkout@v4
@@ -18,9 +33,10 @@ jobs:
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "v1.1.5"
+          automatic_release_tag: "v${{ needs.nump-version.outputs.new_version }}"
           prerelease: false
-          title: "v1.1.5"
+          title: "v${{ needs.bump-version.outputs.new_version }}"
+
   push-to-galaxy:
     runs-on: ubuntu-latest
     needs: github-release
