@@ -35,7 +35,7 @@
     - fad_glb_dc
     - debug
 
-- name: Write DNS Policy request body template for {{ data_center.name }}
+- name: Write GLB Data Center request body template for {{ data_center.name }}
   ansible.builtin.set_fact:
     request_body: |
       {
