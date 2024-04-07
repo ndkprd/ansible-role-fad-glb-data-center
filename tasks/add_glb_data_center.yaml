@@ -34,7 +34,7 @@
     - fad_glb_dc
 
 - debug:
-    vars: fad_glb_existing_data
+    var: fad_glb_existing_data
   
 - name: Print the existing value of data center entry for {{ data_center.name }}
   ansible.builtin.debug:
