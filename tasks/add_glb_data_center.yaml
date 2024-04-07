@@ -119,8 +119,8 @@
   tags:
     - fad_glb_dc
 
-- name: Print the existing value of data center entry for {{ data_center.name }}
-      var: fad_glb_dc_new_data.json
+- name: Print the new value of data center entry for {{ data_center.name }}
+    var: fad_glb_dc_new_data.json.payload
   delegate_to: localhost
   tags:
     - fad_glb_dc
