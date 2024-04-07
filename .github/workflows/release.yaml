@@ -19,7 +19,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          title: Test release using Actions.
+          title: v1.1.3
   push-to-galaxy:
     runs-on: ubuntu-latest
     needs: github-release
