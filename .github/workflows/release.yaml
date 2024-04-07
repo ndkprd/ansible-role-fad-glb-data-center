@@ -21,11 +21,10 @@ jobs:
       - name: Read and and update current the version based on tag.
         # yeah, I know this dumb, don't mind me
         run: |
-          pwd
-          ls -al
           git describe --tags --abbrev=0 > CURRENT_VERSION
           cat CURRENT_VERSION
           version=$(cat CURRENT_VERSION)
+          version=${version#v}
           major_minor="${version%.*}"
           patch_number="${version##*.}"
           new_patch_number=$((patch_number + 1))
