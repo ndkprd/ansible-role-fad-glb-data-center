@@ -68,7 +68,6 @@ jobs:
   send-mail-notification:
     runs-on: ubuntu-latest
     needs: push-to-galaxy
-    if: ${{ needs.push-to-galaxy.result == 'success '}}
     steps:
       - name: Send mail
         uses: dawidd6/action-send-mail@v3
