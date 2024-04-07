@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout repo.
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Read and and update current the version based on tag.
         # yeah, I know this dumb, don't mind me
         run: |
