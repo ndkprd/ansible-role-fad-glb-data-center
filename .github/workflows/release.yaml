@@ -20,7 +20,7 @@ jobs:
         # yeah, I know this dumb, don't mind me
         run: |
           pwd
-          ls
+          ls -al
           git describe --tags --abbrev=0 > CURRENT_VERSION
           cat CURRENT_VERSION
           version=$(cat CURRENT_VERSION)
