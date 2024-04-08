@@ -103,6 +103,7 @@
   delegate_to: localhost
   tags:
     - fad_glb_dc
+    - debug
 
 - name: Print the new value of data center entry for {{ data_center.name }}
   ansible.builtin.debug:
