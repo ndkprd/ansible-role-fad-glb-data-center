@@ -23,14 +23,12 @@
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
   register: fad_glb_dc_existing_data
-  delegate_to: localhost
   tags:
     - fad_glb_dc
 
 - name: Print the existing value of data center entry for {{ data_center.name }}
   ansible.builtin.debug:
     var: fad_glb_dc_existing_data.json.payload
-  delegate_to: localhost
   tags:
     - fad_glb_dc
     - debug
@@ -63,7 +61,6 @@
     headers: "{{ fad_api_header }}"
     body: "{{ request_body }}"
   register: fad_glb_dc_post_result
-  delegate_to: localhost
   when: fad_glb_dc_existing_data.json.payload.mkey is undefined
   changed_when: "fad_glb_dc_post_result.json.payload == 0"
   failed_when: "fad_glb_dc_post_result.json.payload != -15 and fad_glb_dc_post_result.json.payload != 0"
@@ -81,7 +78,6 @@
     headers: "{{ fad_api_header }}"
     body: "{{ request_body }}"
   register: fad_glb_dc_put_result
-  delegate_to: localhost
   when: >
     (fad_glb_dc_existing_data.json.payload.mkey is defined) and
     (data_center.location != fad_glb_dc_existing_data.json.payload.location)
@@ -100,7 +96,6 @@
     headers: "{{ fad_api_header }}"
   register: fad_glb_dc_new_data
   changed_when: "fad_glb_dc_new_data.json.payload != fad_glb_dc_existing_data.json.payload"
-  delegate_to: localhost
   tags:
     - fad_glb_dc
     - debug
@@ -108,7 +103,6 @@
 - name: Print the new value of data center entry for {{ data_center.name }}
   ansible.builtin.debug:
     var: fad_glb_dc_new_data.json.payload
-  delegate_to: localhost
   tags:
     - fad_glb_dc
     - debug
