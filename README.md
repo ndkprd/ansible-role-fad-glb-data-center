@@ -17,14 +17,14 @@ ansible-galaxy install ndkprd.fortiadc-glb-data-centers
 #### Host Vars
 
 | Variable | Data Type | Default Value | Explanation |
-------------------------------------------------------
+|----------|-----------|---------------|-------------|
 | fad_vdom | str | root | Target FAD's VDOM. |
 | fad_apitoken | str | - | Target FAD's API Key. |
 
 #### Group Vars
 
 | Variable | Data Type | Default Value | Explanation |
-------------------------------------------------------
+|----------|-----------|---------------|-------------|
 | fad_glb_data_centers | array | [] | List of Data Centers. |
 | fad_glb_data_centers[x].name | str | - | Data Center name, used as `mkey` in request body. |
 | fad_glb_data_centers[x].location | str | ZZ | 2-letter country ID. |
