@@ -36,7 +36,7 @@ ansible-galaxy install ndkprd.fortiadc-glb-data-centers
 fad-01 ansible_host=fad-01.infra.ndkprd.com ansible_connection=local fad_apitoken=mysupersecrettoken fad_vdom=root
 ```
 
-> **ℹ Note:** almost all tasks are in the form of API Request from localhost, so the `ansible_connection=local` is a must. For better abstractions, you can remove that and put the `connection: local` in Playbook instead.
+> **ℹ Note:** almost all tasks are in the form of API Request from localhost, so the `ansible_connection=local` is a must. But for better abstractions, you can remove that and put the `connection: local` in Playbook instead.
 
 ### Playbook Example
 
