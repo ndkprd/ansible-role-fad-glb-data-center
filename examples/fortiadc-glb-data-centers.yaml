@@ -7,7 +7,7 @@
   connection: local
   vars:
      # for testing-purpose only, to delete the created resources after. change to 'false' if you want the resource to stay.     
-    do_cleanup: ''
+    do_cleanup: 'true'
     # global-load-balance data-center entries
     fad_glb_data_centers:
       - name: dc1.ndkprd.com
