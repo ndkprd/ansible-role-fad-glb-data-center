@@ -6,11 +6,15 @@
   gather_facts: no
   connection: local
   vars:
-     # for testing-purpose only, to delete the created resources after. change to 'false' if you want the resource to stay.
-    do_cleanup: true
+     # for testing-purpose only, to delete the created resources after. change to 'false' if you want the resource to stay.     
+    do_cleanup: ''
     # global-load-balance data-center entries
     fad_glb_data_centers:
       - name: dc1.ndkprd.com
+        location: ID
+      - name: dc2.ndkprd.com
+        location: ID
+      - name: dc3.ndkprd.com
         location: ID
 
   roles:
@@ -19,7 +23,7 @@
   tasks:
     - name: Clean up the created resources.
       ansible.builtin.uri:
-        method: delete
+        method: DELETE
         url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ item.name }}"
         body_format: "{{ fad_api_uri_params.body_format }}"
         validate_certs: "{{ fad_api_uri_params.validate_certs }}"
@@ -27,8 +31,8 @@
         status_code: "{{ fad_api_uri_params.status_code }}"
         headers: "{{ fad_api_header }}"
       register: fad_glb_dc_existing_data
-      delegate_to: localhost
+      # delegate_to: localhost
       when: do_cleanup == true | bool | default('false')
       loop: "{{ fad_glb_data_centers }}"
-      tags:
-        - fad_glb_dc
+      async: 30
+      poll: 0
