@@ -4,7 +4,7 @@
   hosts: all
   become: false
   gather_facts: no
-  connection: local
+  # connection: local
   vars:
      # for testing-purpose only, to delete the created resources after. change to 'false' if you want the resource to stay.     
     do_cleanup: true
