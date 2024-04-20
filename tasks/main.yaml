@@ -1,7 +1,7 @@
 ---
 
 - name: Include task to create/update GLB Data Centers
-  ansible.builtin.include_tasks: add_glb_data_center.yaml
+  ansible.builtin.include_tasks: 01-fad-glb-data-center.yaml
   loop: "{{ fad_glb_data_centers }}"
   loop_control:
     loop_var: data_center
