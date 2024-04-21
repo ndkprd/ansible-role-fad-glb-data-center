@@ -5,9 +5,11 @@
     fad_api_endpoint_glb_data_center: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
     # do GET request against the resources and save them into a var
     fad_glb_data_center_existing_data: >
-      {{ (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+      {{
+      (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
        % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
-       headers=fad_api_header) | from_json).get('payload') }}
+       headers=fad_api_header) | from_json).get('payload')
+       }}
     # template json to be used for request body for POST and PUT task
     fad_glb_data_center_request_body: |
       {
