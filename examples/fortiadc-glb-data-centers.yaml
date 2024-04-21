@@ -3,10 +3,10 @@
 - name: Update/create FortiADC GLB Data Centers resources.
   hosts: all
   become: false
-  gather_facts: no
-  # connection: local
+  gather_facts: false
+  connection: local
   vars:
-     # for testing-purpose only, to delete the created resources after. change to 'false' if you want the resource to stay.     
+     # for testing-purpose only, to delete the created resources after. change to 'false' if you want the resource to stay.
     do_cleanup: true
     # global-load-balance data-center entries
     fad_glb_data_centers:
@@ -18,8 +18,12 @@
         location: ID
 
   roles:
+    # uncomment below to test against ansible-galaxy
     - ndkprd.fortiadc-glb-data-centers
+    # uncomment below to test against local (note: this will not pass ansible-lint)
+    # - ../../ansible-role-fortiadc-glb-data-centers
 
+  # clean-up tasks if you need to delete the resources you just create.
   tasks:
     - name: Clean up the created resources.
       ansible.builtin.uri:
@@ -32,7 +36,9 @@
         headers: "{{ fad_api_header }}"
       register: fad_glb_dc_existing_data
       # delegate_to: localhost
-      when: do_cleanup == true | bool | default('false')
+      when: do_cleanup == 'true' | bool | default('false')
       loop: "{{ fad_glb_data_centers }}"
       async: 30
       poll: 0
+      tags:
+        - cleanup
