@@ -3,14 +3,16 @@
 - name: Set GLB DC REST API endpoint for {{ data_center.name }}
   ansible.builtin.set_fact:
     fad_api_endpoint_glb_dc: https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}
-  tags:
-    - fad_glb_dc
+    fad_glb_dc_request_body: |
+      {
+        "mkey": "{{ data_center.name }}",
+        "location": "{{ data_center.location }}"
+      }
 
 - name: Print out the GLB DC REST API endpoint for {{ data_center.name }}
   ansible.builtin.debug:
     msg: "This FAD GLB DC REST API endpoint: {{ fad_api_endpoint_glb_dc }}"
   tags:
-    - fad_glb_dc
     - debug
 
 - name: Get the existing value of the data center entry for {{ data_center.name }}
@@ -23,31 +25,17 @@
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
   register: fad_glb_dc_existing_data
-  tags:
-    - fad_glb_dc
 
 - name: Print the existing value of data center entry for {{ data_center.name }}
   ansible.builtin.debug:
     var: fad_glb_dc_existing_data.json.payload
   tags:
-    - fad_glb_dc
     - debug
-
-- name: Write GLB Data Center request body template for {{ data_center.name }}
-  ansible.builtin.set_fact:
-    request_body: |
-      {
-        "mkey": "{{ data_center.name }}",
-        "location": "{{ data_center.location }}"
-      }
-  tags:
-    - fad_glb_dc
 
 - name: Print out the request_body result for {{ data_center.name }}
   ansible.builtin.debug:
-    var: request_body
+    var: fad_glb_dc_request_body
   tags:
-    - fad_glb_dc
     - debug
 
 - name: Create new data center entry if entry not found for {{ data_center.name }}
@@ -59,13 +47,11 @@
     return_content: "{{ fad_api_uri_params.return_content }}"
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
-    body: "{{ request_body }}"
+    body: "{{ fad_glb_dc_request_body }}"
   register: fad_glb_dc_post_result
   when: fad_glb_dc_existing_data.json.payload.mkey is undefined
   changed_when: "fad_glb_dc_post_result.json.payload == 0"
   failed_when: "fad_glb_dc_post_result.json.payload != -15 and fad_glb_dc_post_result.json.payload != 0"
-  tags:
-    - fad_glb_dc
 
 - name: Update the data center entry if entry exist for {{ data_center.name }}
   ansible.builtin.uri:
@@ -76,14 +62,12 @@
     return_content: "{{ fad_api_uri_params.return_content }}"
     status_code: "{{ fad_api_uri_params.status_code }}"
     headers: "{{ fad_api_header }}"
-    body: "{{ request_body }}"
+    body: "{{ fad_glb_dc_request_body }}"
   register: fad_glb_dc_put_result
   when: >
     (fad_glb_dc_existing_data.json.payload.mkey is defined) and
     (data_center.location != fad_glb_dc_existing_data.json.payload.location)
   failed_when: "fad_glb_dc_put_result.json.payload != -15 and fad_glb_dc_put_result.json.payload != 0"
-  tags:
-    - fad_glb_dc
 
 - name: Check if the data center value has changed for {{ data_center.name }}
   ansible.builtin.uri:
@@ -97,12 +81,10 @@
   register: fad_glb_dc_new_data
   changed_when: "fad_glb_dc_new_data.json.payload != fad_glb_dc_existing_data.json.payload"
   tags:
-    - fad_glb_dc
     - debug
 
 - name: Print the new value of data center entry for {{ data_center.name }}
   ansible.builtin.debug:
     var: fad_glb_dc_new_data.json.payload
   tags:
-    - fad_glb_dc
     - debug
