@@ -1,6 +1,6 @@
 ---
 
-- name: Set GLB DC REST API endpoint for {{ data_center.name }}
+- name: Set GLB DC REST API endpoint and vars for {{ data_center.name }}
   ansible.builtin.set_fact:
     fad_api_endpoint_glb_data_center: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
     # do GET request against the resources and save them into a var
@@ -15,7 +15,7 @@
         "location": "{{ data_center.location }}"
       }
 
-- name: Print out the created endpoints and var for {{ data_center.name }}
+- name: Print out the created endpoint and vars for {{ data_center.name }}
   ansible.builtin.debug:
     msg:
       - "fad_api_endpoint_glb_data_center: {{ fad_api_endpoint_glb_data_center }}"
