@@ -38,7 +38,5 @@
       # delegate_to: localhost
       when: do_cleanup == 'true' | bool | default('false')
       loop: "{{ fad_glb_data_centers }}"
-      async: 30
-      poll: 0
       tags:
         - cleanup
