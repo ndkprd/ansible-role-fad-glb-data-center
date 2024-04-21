@@ -4,7 +4,7 @@
   hosts: all
   become: false
   gather_facts: false
-  # connection: local
+  connection: local
   vars:
      # for testing-purpose only, to delete the created resources after. change to 'false' if you want the resource to stay.
     do_cleanup: true
@@ -18,8 +18,12 @@
         location: ID
 
   roles:
+    # uncomment below to test against ansible-galaxy
     - ndkprd.fortiadc-glb-data-centers
+    # uncomment below to test against local (note: this will not pass ansible-lint)
+    # - ../../ansible-role-fortiadc-glb-data-centers
 
+  # clean-up tasks if you need to delete the resources you just create.
   tasks:
     - name: Clean up the created resources.
       ansible.builtin.uri:
