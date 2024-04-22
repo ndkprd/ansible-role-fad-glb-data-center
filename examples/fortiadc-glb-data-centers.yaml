@@ -10,33 +10,53 @@
     do_cleanup: true
     # global-load-balance data-center entries
     fad_glb_data_centers:
+      - name: dc0.ndkprd.com
+        location: ID
       - name: dc1.ndkprd.com
         location: ID
       - name: dc2.ndkprd.com
         location: ID
       - name: dc3.ndkprd.com
         location: ID
+      - name: dc4.ndkprd.com
+        location: ID
+      - name: dc5.ndkprd.com
+        location: ID
+      - name: dc6.ndkprd.com
+        location: ID
+      - name: dc7.ndkprd.com
+        location: ID
+      - name: dc8.ndkprd.com
+        location: ID
+      - name: dc9.ndkprd.com
+        location: ID
 
   roles:
     # uncomment below to test against ansible-galaxy
-    - ndkprd.fortiadc-glb-data-centers
+    # - ndkprd.fortiadc-glb-data-centers
     # uncomment below to test against local (note: this will not pass ansible-lint)
-    # - ../../ansible-role-fortiadc-glb-data-centers
+    - ../../ansible-role-fortiadc-glb-data-centers
 
   # clean-up tasks if you need to delete the resources you just create.
   tasks:
     - name: Clean up the created resources.
       ansible.builtin.uri:
         method: DELETE
-        url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ item.name }}"
+        url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
         body_format: "{{ fad_api_uri_params.body_format }}"
         validate_certs: "{{ fad_api_uri_params.validate_certs }}"
         return_content: "{{ fad_api_uri_params.return_content }}"
         status_code: "{{ fad_api_uri_params.status_code }}"
         headers: "{{ fad_api_header }}"
-      register: fad_glb_dc_existing_data
+      register: fad_glb_data_center_delete_result
       # delegate_to: localhost
       when: do_cleanup == 'true' | bool | default('false')
+      changed_when: fad_glb_data_center_delete_result == 0
       loop: "{{ fad_glb_data_centers }}"
+      loop_control:
+        loop_var: data_center
+        label: "{{ data_center.name }}"
+      # async: 30
+      # poll: 0
       tags:
         - cleanup

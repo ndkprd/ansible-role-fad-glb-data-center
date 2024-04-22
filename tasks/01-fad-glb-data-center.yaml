@@ -29,7 +29,7 @@
 - name: Create new data center entry if entry not found for {{ data_center.name }}
   ansible.builtin.uri:
     method: POST
-    url: "{{ fad_api_endpoint_glb_data_center }}"
+    url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
     body_format: "{{ fad_api_uri_params.body_format }}"
     validate_certs: "{{ fad_api_uri_params.validate_certs }}"
     return_content: "{{ fad_api_uri_params.return_content }}"
@@ -37,9 +37,12 @@
     headers: "{{ fad_api_header }}"
     body: "{{ fad_glb_data_center_request_body }}"
   register: fad_glb_data_center_post_result
-  when: fad_glb_data_center_existing_data.mkey is undefined
-  changed_when: "fad_glb_data_center_post_result.json.payload == 0"
-  failed_when: "fad_glb_data_center_post_result.json.payload != -15 and fad_glb_data_center_post_result.json.payload != 0"
+  when: >
+    (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+    % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+    headers=fad_api_header) | from_json).get('payload').get('mkey') is undefined
+  # changed_when: "fad_glb_data_center_post_result.json.payload == 0"
+  # failed_when: "fad_glb_data_center_post_result.json.payload != -15 and fad_glb_data_center_post_result.json.payload != 0"
 
 - name: Update the data center entry if entry exist for {{ data_center.name }}
   ansible.builtin.uri:
