@@ -51,7 +51,7 @@
     - name: GLB Data Center update tasks.
       block:
 
-        - name: Update data center entry if entry exist and something has changed.
+        - name: Update data center entry if it exist and any of its value has changed.
           ansible.builtin.uri:
             method: PUT
             url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
