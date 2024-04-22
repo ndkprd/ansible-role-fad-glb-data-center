@@ -64,9 +64,9 @@ fad-01 ansible_host=fad-01.infra.ndkprd.com ansible_connection=local fad_apitoke
 
 ### About Tags
 
-I added quiet lots of debug task, mainly to check if the variable I set is correct. These tags basically just print out the var that the previous task set/register. You can skip them altogether by skipping tasks with `debug` tags.
+Every task in this role is tagged with `fad_glb_data_centers`, with 2 task (one before, one after) is also tagged with `debug` to check initial and post-task value. You can skip out the debug with `--skip-tags debug`
 
-For example, if you're using CLI, you can just go `ansible-playbook playbook.yaml --skip-tags debug`.
+For example, if you're using CLI, you can just go `ansible-playbook -i hosts playbook.yaml --skip-tags debug`.
 
 ## Limitation
 
