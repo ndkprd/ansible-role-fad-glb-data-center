@@ -42,7 +42,7 @@
           changed_when: "fad_glb_data_center_post_results.json.payload == 0"
           failed_when: "fad_glb_data_center_post_results.json.payload != 0 and fad_glb_data_center_post_results.json.payload != -15"
 
-        - name: Print out the GLB Data Center task results.
+        - name: Print out the GLB Data Center task results if new entry is created.
           ansible.builtin.debug:
             var: fad_glb_data_center_post_results.results
           when: not fad_glb_data_center_post_results.skipped
@@ -82,7 +82,7 @@
           changed_when: "fad_glb_data_center_put_results.json.payload == 0"
           failed_when: "fad_glb_data_center_put_results.json.payload != 0 and fad_glb_data_center_put_results.json.payload != -15"
 
-        - name: Print out the PUT task result.
+        - name: Print out the GLB Data Center update task result if any resources is updated.
           ansible.builtin.debug:
             var: fad_glb_data_center_put_results.results
           when: not fad_glb_data_center_put_results.skipped
