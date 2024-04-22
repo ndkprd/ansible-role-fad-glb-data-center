@@ -8,34 +8,12 @@
   vars:
      # for testing-purpose only, to delete the created resources after. change to 'false' if you want the resource to stay.
     do_cleanup: true
-    # global-load-balance data-center entries
-    fad_glb_data_centers:
-      - name: dc0.ndkprd.com
-        location: ID
-      - name: dc1.ndkprd.com
-        location: ID
-      - name: dc2.ndkprd.com
-        location: ID
-      - name: dc3.ndkprd.com
-        location: ID
-      - name: dc4.ndkprd.com
-        location: ID
-      - name: dc5.ndkprd.com
-        location: ID
-      - name: dc6.ndkprd.com
-        location: ID
-      - name: dc7.ndkprd.com
-        location: ID
-      - name: dc8.ndkprd.com
-        location: ID
-      - name: dc9.ndkprd.com
-        location: ID
 
   roles:
     # uncomment below to test against ansible-galaxy
-    # - ndkprd.fortiadc-glb-data-centers
+    - ndkprd.fortiadc-glb-data-centers
     # uncomment below to test against local (note: this will not pass ansible-lint)
-    - ../../ansible-role-fortiadc-glb-data-centers
+    # - ../../ansible-role-fortiadc-glb-data-centers
 
   # clean-up tasks if you need to delete the resources you just create.
   tasks:

@@ -1,82 +1,212 @@
 ---
 
-# - name: Include task to create/update GLB Data Centers
-#   tags:
-#     - fad_glb_data_centers
-#   block:
-#     - name: Include task to create/update GLB Data Centers
-#       ansible.builtin.include_tasks: 01-fad-glb-data-center.yaml
-#       loop: "{{ fad_glb_data_centers }}"
-#       loop_control:
-#         loop_var: data_center
-#         label: "{{ data_center.name }}"
+# Using async + check async_status is actually 10% less eficient than just doing it without
+# async, since the URI task itself takes less time per loop than async_status check.
+# But if you don't need validity check, the role is actually 40% faster
 
-- name: Create new data center entry if entry not found.
-  ansible.builtin.uri:
-    method: POST
-    url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
-    body_format: "{{ fad_api_uri_params.body_format }}"
-    validate_certs: "{{ fad_api_uri_params.validate_certs }}"
-    return_content: "{{ fad_api_uri_params.return_content }}"
-    status_code: "{{ fad_api_uri_params.status_code }}"
-    headers: "{{ fad_api_header }}"
-    body: |
-      {
-        "mkey": "{{ data_center.name }}",
-        "location": "{{ data_center.location }}"
-      }
-  register: fad_glb_data_center_post_results
-  loop: "{{ fad_glb_data_centers }}"
-  loop_control:
-    loop_var: data_center
-    label: "{{ data_center.name }}"
-  when: >
-    (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
-    % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
-    headers=fad_api_header) | from_json).get('payload').mkey is undefined
-  changed_when: "fad_glb_data_center_post_results.json.payload == 0"
-  failed_when: "fad_glb_data_center_post_results.json.payload != 0 and fad_glb_data_center_post_results.json.payload != -15"
-  ignore_errors: true
+# For benchmark, using 50 loops:
+# 1. Using async (changed_when and failed_when handled by async_status task): 40s (24s URI task + 16s async_status check task after)
+# 2. Using async without validation check: 24s.
+# 3. Without async (changed_when and failed_when handled by the URI task itself): 36s.
 
-- name: Print out the POST task result.
-  ansible.builtin.debug:
-    var: fad_glb_data_center_post_results.results
-  when: not fad_glb_data_center_post_results.skipped
-  tags: [debug]
+- name: Create/update GLB Data Center entries.
+  tags: [fad_glb_data_centers]
+  block:
 
-- name: Update data center entry if entry exist and something has changed.
-  ansible.builtin.uri:
-    method: PUT
-    url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
-    body_format: "{{ fad_api_uri_params.body_format }}"
-    validate_certs: "{{ fad_api_uri_params.validate_certs }}"
-    return_content: "{{ fad_api_uri_params.return_content }}"
-    status_code: "{{ fad_api_uri_params.status_code }}"
-    headers: "{{ fad_api_header }}"
-    body: |
-      {
-        "mkey": "{{ data_center.name }}",
-        "location": "{{ data_center.location }}"
-      }
-  register: fad_glb_data_center_put_results
-  loop: "{{ fad_glb_data_centers }}"
-  loop_control:
-    loop_var: data_center
-    label: "{{ data_center.name }}"
-  when: >
-    ((lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
-    % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
-    headers=fad_api_header) | from_json).get('payload').mkey is defined)
-    and
-    (data_center.location != (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
-    % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
-    headers=fad_api_header) | from_json).get('payload').location)
-  ignore_errors: true
-  changed_when: "fad_glb_data_center_put_results.json.payload == 0"
-  failed_when: "fad_glb_data_center_put_results.json.payload != 0 and fad_glb_data_center_put_results.json.payload != -15"
+    - name: GLB Data Center entry create tasks.
+      block:
 
-- name: Print out the PUT task result.
-  ansible.builtin.debug:
-    var: fad_glb_data_center_put_results.results
-  when: not fad_glb_data_center_put_results.skipped
-  tags: [debug]
+        - name: Create new GLB Data Center entry if entry not found.
+          ansible.builtin.uri:
+            method: POST
+            url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
+            body_format: "{{ fad_api_uri_params.body_format }}"
+            validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+            return_content: "{{ fad_api_uri_params.return_content }}"
+            status_code: "{{ fad_api_uri_params.status_code }}"
+            headers: "{{ fad_api_header }}"
+            body: |
+              {
+                "mkey": "{{ data_center.name }}",
+                "location": "{{ data_center.location }}"
+              }
+          register: fad_glb_data_center_post_results
+          loop: "{{ fad_glb_data_centers }}"
+          loop_control:
+            loop_var: data_center
+            label: "{{ data_center.name }}"
+          when: >
+            (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+            % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').mkey is undefined
+          changed_when: "fad_glb_data_center_post_results.json.payload == 0"
+          failed_when: "fad_glb_data_center_post_results.json.payload != 0 and fad_glb_data_center_post_results.json.payload != -15"
+
+        - name: Print out the GLB Data Center task results.
+          ansible.builtin.debug:
+            var: fad_glb_data_center_post_results.results
+          when: not fad_glb_data_center_post_results.skipped
+          tags: [debug]
+
+    - name: GLB Data Center update tasks.
+      block:
+
+        - name: Update data center entry if entry exist and something has changed.
+          ansible.builtin.uri:
+            method: PUT
+            url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
+            body_format: "{{ fad_api_uri_params.body_format }}"
+            validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+            return_content: "{{ fad_api_uri_params.return_content }}"
+            status_code: "{{ fad_api_uri_params.status_code }}"
+            headers: "{{ fad_api_header }}"
+            body: |
+              {
+                "mkey": "{{ data_center.name }}",
+                "location": "{{ data_center.location }}"
+              }
+          register: fad_glb_data_center_put_results
+          loop: "{{ fad_glb_data_centers }}"
+          loop_control:
+            loop_var: data_center
+            label: "{{ data_center.name }}"
+          when: >
+            ((lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+            % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').mkey is defined)
+            and
+            (data_center.location != (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+            % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+            headers=fad_api_header) | from_json).get('payload').location)
+          ignore_errors: true
+          changed_when: "fad_glb_data_center_put_results.json.payload == 0"
+          failed_when: "fad_glb_data_center_put_results.json.payload != 0 and fad_glb_data_center_put_results.json.payload != -15"
+
+        - name: Print out the PUT task result.
+          ansible.builtin.debug:
+            var: fad_glb_data_center_put_results.results
+          when: not fad_glb_data_center_put_results.skipped
+          tags: [debug]
+
+# - name: Create/update GLB Data Center entries (with async).
+  # tags: [fad_glb_data_centers]
+  # block:
+
+    # - name: GLB Data Center entry create tasks(with async).
+    #   block:
+
+        # - name: Create new GLB Data Center entry if entry not found (with async).
+        #   ansible.builtin.uri:
+        #     method: POST
+        #     url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
+        #     body_format: "{{ fad_api_uri_params.body_format }}"
+        #     validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+        #     return_content: "{{ fad_api_uri_params.return_content }}"
+        #     status_code: "{{ fad_api_uri_params.status_code }}"
+        #     headers: "{{ fad_api_header }}"
+        #     body: |
+        #       {
+        #         "mkey": "{{ data_center.name }}",
+        #         "location": "{{ data_center.location }}"
+        #       }
+        #   register: fad_glb_data_center_post_results
+        #   loop: "{{ fad_glb_data_centers }}"
+        #   loop_control:
+        #     loop_var: data_center
+        #     label: "{{ data_center.name }}"
+        #   when: >
+        #     (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+        #     % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+        #     headers=fad_api_header) | from_json).get('payload').mkey is undefined
+        #   changed_when: "fad_glb_data_center_post_results.json.payload == 0"
+        #   failed_when: "fad_glb_data_center_post_results.json.payload != 0 and fad_glb_data_center_post_results.json.payload != -15"
+        #   async: 30
+        #   poll: 0
+
+        # - name: Print out the GLB Data Center task results (with async).
+        #   ansible.builtin.debug:
+        #     var: fad_glb_data_center_post_results.results
+        #   when: not fad_glb_data_center_post_results.skipped
+        #   tags: [debug]
+
+        # - name: Check the async GLB Data Center create task async result (with async).
+        #   ansible.builtin.async_status:
+        #     jid: "{{ fad_glb_data_center_post_result.ansible_job_id }}"
+        #   loop: "{{ fad_glb_data_center_post_results.results }}"
+        #   loop_control:
+        #     loop_var: "fad_glb_data_center_post_result"
+        #     label: "{{ fad_glb_data_center_post_result.data_center.name }}"
+        #   register: fad_glb_data_center_post_async_poll_results
+        #   until: fad_glb_data_center_post_async_poll_results.finished
+        #   changed_when: "fad_glb_data_center_post_async_poll_results.json.payload == 0"
+        #   failed_when: "fad_glb_data_center_post_async_poll_results.json.payload != 0 and fad_glb_data_center_post_async_poll_results.json.payload != -15"
+        #   retries: 10
+        #   when: (fad_glb_data_center_post_results not skipped) and use_async_validation
+
+        # - name: Print out the GLB Data Center create task async poll results (with async).
+        #   ansible.builtin.debug:
+        #     var: fad_glb_data_center_post_async_poll_results
+        #   when: fad_glb_data_center_post_async_poll_results not skipped
+        #   tags: [debug]
+
+    # - name: Update GLB Data Center update tasks (with async).
+    #   block:
+
+    #     - name: Update data center entry if entry exist and something has changed (with async).
+    #       ansible.builtin.uri:
+    #         method: PUT
+    #         url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
+    #         body_format: "{{ fad_api_uri_params.body_format }}"
+    #         validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+    #         return_content: "{{ fad_api_uri_params.return_content }}"
+    #         status_code: "{{ fad_api_uri_params.status_code }}"
+    #         headers: "{{ fad_api_header }}"
+    #         body: |
+    #           {
+    #             "mkey": "{{ data_center.name }}",
+    #             "location": "{{ data_center.location }}"
+    #           }
+    #       register: fad_glb_data_center_put_results
+    #       loop: "{{ fad_glb_data_centers }}"
+    #       loop_control:
+    #         loop_var: data_center
+    #         label: "{{ data_center.name }}"
+    #       when: >
+    #         ((lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+    #         % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+    #         headers=fad_api_header) | from_json).get('payload').mkey is defined)
+    #         and
+    #         (data_center.location != (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+    #         % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+    #         headers=fad_api_header) | from_json).get('payload').location)
+    #       ignore_errors: true
+    #       changed_when: "fad_glb_data_center_put_results.json.payload == 0"
+    #       failed_when: "fad_glb_data_center_put_results.json.payload != 0 and fad_glb_data_center_put_results.json.payload != -15"
+    #       async: 30
+    #       poll: 0
+
+        # - name: Print out the PUT task result (with async).
+        #   ansible.builtin.debug:
+        #     var: fad_glb_data_center_put_results.results
+        #   when: not fad_glb_data_center_put_results.skipped
+        #   tags: [debug]
+
+        # - name: Check the async GLB Data Center update task async result (with async).
+        #   ansible.builtin.async_status:
+        #     jid: "{{ fad_glb_data_center_put_result.ansible_job_id }}"
+        #   loop: "{{ fad_glb_data_center_put_results.results }}"
+        #   loop_control:
+        #     loop_var: "fad_glb_data_center_put_result"
+        #     label: "{{ fad_glb_data_center_put_result.data_center.name }}"
+        #   register: fad_glb_data_center_put_async_poll_results
+        #   until: fad_glb_data_center_put_async_poll_results.finished
+        #   changed_when: "fad_glb_data_center_put_async_poll_results.json.payload == 0"
+        #   failed_when: "fad_glb_data_center_put_async_poll_results.json.payload != 0 and fad_glb_data_center_put_async_poll_results.json.payload != -15"
+        #   retries: 10
+        #   when: (fad_glb_data_center_put_results not skipped) and use_async_validation
+
+        # - name: Print out the GLB Data Center update task async poll results (with async).
+        #   ansible.builtin.debug:
+        #     var: fad_glb_data_center_put_async_poll_results
+        #   when: fad_glb_data_center_put_async_poll_results not skipped
+        #   tags: [debug]
