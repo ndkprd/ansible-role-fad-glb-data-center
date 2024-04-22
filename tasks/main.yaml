@@ -1,12 +1,82 @@
 ---
 
-- name: Include task to create/update GLB Data Centers
-  tags:
-    - fad_glb_data_centers
-  block:
-    - name: Include task to create/update GLB Data Centers
-      ansible.builtin.include_tasks: 01-fad-glb-data-center.yaml
-      loop: "{{ fad_glb_data_centers }}"
-      loop_control:
-        loop_var: data_center
-        label: "{{ data_center.name }}"
+# - name: Include task to create/update GLB Data Centers
+#   tags:
+#     - fad_glb_data_centers
+#   block:
+#     - name: Include task to create/update GLB Data Centers
+#       ansible.builtin.include_tasks: 01-fad-glb-data-center.yaml
+#       loop: "{{ fad_glb_data_centers }}"
+#       loop_control:
+#         loop_var: data_center
+#         label: "{{ data_center.name }}"
+
+- name: Create new data center entry if entry not found.
+  ansible.builtin.uri:
+    method: POST
+    url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
+    body_format: "{{ fad_api_uri_params.body_format }}"
+    validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+    return_content: "{{ fad_api_uri_params.return_content }}"
+    status_code: "{{ fad_api_uri_params.status_code }}"
+    headers: "{{ fad_api_header }}"
+    body: |
+      {
+        "mkey": "{{ data_center.name }}",
+        "location": "{{ data_center.location }}"
+      }
+  register: fad_glb_data_center_post_results
+  loop: "{{ fad_glb_data_centers }}"
+  loop_control:
+    loop_var: data_center
+    label: "{{ data_center.name }}"
+  when: >
+    (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+    % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+    headers=fad_api_header) | from_json).get('payload').mkey is undefined
+  changed_when: "fad_glb_data_center_post_results.json.payload == 0"
+  failed_when: "fad_glb_data_center_post_results.json.payload != 0 and fad_glb_data_center_post_results.json.payload != -15"
+  ignore_errors: true
+
+- name: Print out the POST task result.
+  ansible.builtin.debug:
+    var: fad_glb_data_center_post_results.results
+  when: not fad_glb_data_center_post_results.skipped
+  tags: [debug]
+
+- name: Update data center entry if entry exist and something has changed.
+  ansible.builtin.uri:
+    method: PUT
+    url: "https://{{ ansible_host }}/api/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey={{ data_center.name }}"
+    body_format: "{{ fad_api_uri_params.body_format }}"
+    validate_certs: "{{ fad_api_uri_params.validate_certs }}"
+    return_content: "{{ fad_api_uri_params.return_content }}"
+    status_code: "{{ fad_api_uri_params.status_code }}"
+    headers: "{{ fad_api_header }}"
+    body: |
+      {
+        "mkey": "{{ data_center.name }}",
+        "location": "{{ data_center.location }}"
+      }
+  register: fad_glb_data_center_put_results
+  loop: "{{ fad_glb_data_centers }}"
+  loop_control:
+    loop_var: data_center
+    label: "{{ data_center.name }}"
+  when: >
+    ((lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+    % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+    headers=fad_api_header) | from_json).get('payload').mkey is defined)
+    and
+    (data_center.location != (lookup('url', 'https://%s/api/global_load_balance_data_center?vdom=%s&mkey=%s'
+    % (ansible_host, fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+    headers=fad_api_header) | from_json).get('payload').location)
+  ignore_errors: true
+  changed_when: "fad_glb_data_center_put_results.json.payload == 0"
+  failed_when: "fad_glb_data_center_put_results.json.payload != 0 and fad_glb_data_center_put_results.json.payload != -15"
+
+- name: Print out the PUT task result.
+  ansible.builtin.debug:
+    var: fad_glb_data_center_put_results.results
+  when: not fad_glb_data_center_put_results.skipped
+  tags: [debug]
