@@ -3,7 +3,7 @@
 fad_base_url: "https://{{ ansible_host }}/api"
 
 fad_endpoint:
-  glb_data_center: "/global_load_balance_data_center?vdom=%s&mkey=%s"
+  glb_data_center: "/global_load_balance_data_center?vdom={{ fad_vdom }}&mkey=%s"
 
 fad_api_uri_params:
   body_format: json

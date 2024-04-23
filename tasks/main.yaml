@@ -19,7 +19,7 @@
       ansible.builtin.debug:
         msg: >
           {{ (lookup('url', fad_glb_data_center_api_endpoint
-          % (fad_vdom, data_center.name), validate_certs=false,
+          % (data_center.name), validate_certs=false,
           split_lines=false, headers=fad_api_header) | from_json).get('payload') }}
       loop: "{{ fad_glb_data_centers }}"
       loop_control:
@@ -30,7 +30,7 @@
     - name: Create new GLB Data Center entry if entry not found.
       ansible.builtin.uri:
         method: POST
-        url: "{{ fad_glb_data_center_api_endpoint | format(fad_vdom, data_center.name) }}"
+        url: "{{ fad_glb_data_center_api_endpoint | format(data_center.name) }}"
         body_format: "{{ fad_api_uri_params.body_format }}"
         validate_certs: "{{ fad_api_uri_params.validate_certs }}"
         return_content: "{{ fad_api_uri_params.return_content }}"
@@ -48,7 +48,7 @@
         label: "{{ data_center.name }}"
       when: >
         (lookup('url', fad_glb_data_center_api_endpoint
-        % (fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+        % (data_center.name), validate_certs=false, split_lines=false,
         headers=fad_api_header) | from_json).get('payload').mkey is undefined
       changed_when: "fad_glb_data_center_post_results.json.payload == 0"
       failed_when: "fad_glb_data_center_post_results.json.payload not in [0, -15]"
@@ -56,7 +56,7 @@
     - name: Update data center entry if it exist and any of its value has changed.
       ansible.builtin.uri:
         method: PUT
-        url: "{{ fad_glb_data_center_api_endpoint | format(fad_vdom, data_center.name) }}"
+        url: "{{ fad_glb_data_center_api_endpoint | format(data_center.name) }}"
         body_format: "{{ fad_api_uri_params.body_format }}"
         validate_certs: "{{ fad_api_uri_params.validate_certs }}"
         return_content: "{{ fad_api_uri_params.return_content }}"
@@ -74,11 +74,11 @@
         label: "{{ data_center.name }}"
       when: >
         ((lookup('url', fad_glb_data_center_api_endpoint
-        % (fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+        % (data_center.name), validate_certs=false, split_lines=false,
         headers=fad_api_header) | from_json).get('payload').mkey is defined)
         and
         (data_center.location != (lookup('url', fad_glb_data_center_api_endpoint
-        % (fad_vdom, data_center.name), validate_certs=false, split_lines=false,
+        % (data_center.name), validate_certs=false, split_lines=false,
         headers=fad_api_header) | from_json).get('payload').location)
       ignore_errors: true
       changed_when: "fad_glb_data_center_put_results.json.payload == 0"
@@ -88,7 +88,7 @@
       ansible.builtin.debug:
         msg: >
           {{ (lookup('url', fad_glb_data_center_api_endpoint
-          % (fad_vdom, data_center.name), validate_certs=false,
+          % (data_center.name), validate_certs=false,
           split_lines=false, headers=fad_api_header) | from_json).get('payload') }}
       loop: "{{ fad_glb_data_centers }}"
       loop_control:
