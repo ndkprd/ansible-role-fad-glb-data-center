@@ -38,4 +38,4 @@
           loop: "{{ fad_glb_data_centers }}"
           loop_control:
             label: "{{ item.name }}"
-          tags: [cleanup, fad_glb_data_centers] 
+          tags: [cleanup, fad_glb_data_center] 
